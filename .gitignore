@@ -1,0 +1,79 @@
+const form = document.getElementById('studentForm');
+const resultBox = document.getElementById('resultBox');
+const tableBody = document.getElementById('studentTableBody');
+
+async function loadStudents() {
+  try {
+    const response = await fetch('/api/students');
+    const students = await response.json();
+
+    if (!students.length) {
+      tableBody.innerHTML = '<tr><td colspan="5">No student records yet.</td></tr>';
+      return;
+    }
+
+    tableBody.innerHTML = students
+      .map(
+        (student) => `
+          <tr>
+            <td>${student.name}</td>
+            <td>${student.attendance}%</td>
+            <td>${student.predicted_score}</td>
+            <td>${student.predicted_grade}</td>
+            <td>${student.performance_level}</td>
+          </tr>
+        `
+      )
+      .join('');
+  } catch (error) {
+    console.error('Error loading students:', error);
+    tableBody.innerHTML = '<tr><td colspan="5">Unable to load records.</td></tr>';
+  }
+}
+
+form.addEventListener('submit', async (event) => {
+  event.preventDefault();
+
+  const payload = {
+    name: document.getElementById('name').value,
+    age: Number(document.getElementById('age').value),
+    attendance: Number(document.getElementById('attendance').value),
+    assignment_score: Number(document.getElementById('assignment_score').value),
+    quiz_score: Number(document.getElementById('quiz_score').value),
+    study_hours: Number(document.getElementById('study_hours').value),
+    extracurricular_activity: Number(document.getElementById('extracurricular_activity').value),
+    family_support: Number(document.getElementById('family_support').value),
+  };
+
+  try {
+    const response = await fetch('/api/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Prediction failed');
+    }
+
+    resultBox.classList.remove('empty');
+    resultBox.innerHTML = `
+      <h3>${data.name}</h3>
+      <div class="metric"><span>Predicted Score</span><strong>${data.predicted_score}/100</strong></div>
+      <div class="metric"><span>Grade</span><strong>${data.predicted_grade}</strong></div>
+      <div class="metric"><span>Performance Level</span><strong>${data.performance_level}</strong></div>
+      <div class="metric"><span>Attendance</span><strong>${data.attendance}%</strong></div>
+      <div class="metric"><span>Study Hours</span><strong>${data.study_hours} hrs/day</strong></div>
+    `;
+
+    form.reset();
+    loadStudents();
+  } catch (error) {
+    resultBox.classList.remove('empty');
+    resultBox.innerHTML = `<p style="color: red;">${error.message}</p>`;
+  }
+});
+
+loadStudents();

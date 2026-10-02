@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Performance Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1>AI Student Performance Predictor</h1>
+        <p>Estimate student outcomes using academic and personal performance indicators.</p>
+      </header>
+
+      <main class="layout">
+        <section class="card form-card">
+          <h2>Student Details</h2>
+          <form id="studentForm">
+            <div class="grid">
+              <label>
+                Student Name
+                <input type="text" id="name" name="name" required />
+              </label>
+
+              <label>
+                Age
+                <input type="number" id="age" name="age" min="10" max="30" required />
+              </label>
+
+              <label>
+                Attendance (%)
+                <input type="number" id="attendance" name="attendance" min="0" max="100" required />
+              </label>
+
+              <label>
+                Assignment Score (%)
+                <input type="number" id="assignment_score" name="assignment_score" min="0" max="100" required />
+              </label>
+
+              <label>
+                Quiz Score (%)
+                <input type="number" id="quiz_score" name="quiz_score" min="0" max="100" required />
+              </label>
+
+              <label>
+                Study Hours / Day
+                <input type="number" id="study_hours" name="study_hours" min="0" max="12" required />
+              </label>
+
+              <label>
+                Extracurricular Activity (1-10)
+                <input type="number" id="extracurricular_activity" name="extracurricular_activity" min="0" max="10" required />
+              </label>
+
+              <label>
+                Family Support (1-10)
+                <input type="number" id="family_support" name="family_support" min="0" max="10" required />
+              </label>
+            </div>
+
+            <button type="submit">Predict Performance</button>
+          </form>
+        </section>
+
+        <section class="card result-card">
+          <h2>Prediction Result</h2>
+          <div id="resultBox" class="result-box empty">
+            <p>Prediction will appear here after submitting the form.</p>
+          </div>
+        </section>
+      </main>
+
+      <section class="card table-card">
+        <h2>Recent Predictions</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Attendance</th>
+              <th>Score</th>
+              <th>Grade</th>
+              <th>Level</th>
+            </tr>
+          </thead>
+          <tbody id="studentTableBody">
+            <tr>
+              <td colspan="5">No student records yet.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
